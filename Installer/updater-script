@@ -1,0 +1,105 @@
+# Before: ui_print("  Hi! ");
+# Now:    ui_print " Hi! "
+#-----------Dynamic Installer Configs-----------#
+#The #MAGISK tag is required, dont remove it
+#MAGISK
+setdefault magisk_support off
+setdefault ensure_rw off
+setdefault import_addons off
+setdefault apex_mount off
+setdefault extraction_speed default
+setdefault permissions "0:0:0755:0644"
+setdefault devices "SM-M526B:SM-M526BR"
+#-----------------------------------------------#
+#Your script starts here:
+# Coded by saadelasfur @telegram
+
+MODEL=$(grep_cmdline androidboot.em.model)
+BOOTRP=$(grep_cmdline androidboot.rp)
+
+ui_print " "
+ui_print "------------------------------------------"
+ui_print " -- WiFi fix for Galaxy M52 5G (m52xq) -- "
+ui_print "------------------------------------------"
+ui_print " ------- by saadelasfur @telegram ------- "
+ui_print "------------------------------------------"
+ui_print " "
+
+# Mount partitions
+ui_print " -- Mounting partitions..."
+mount_all
+
+# Debloat old IPA blobs
+delete /vendor/firmware/wpss.b00
+delete /vendor/firmware/wpss.b01
+delete /vendor/firmware/wpss.b02
+delete /vendor/firmware/wpss.b03
+delete /vendor/firmware/wpss.b04
+delete /vendor/firmware/wpss.b05
+delete /vendor/firmware/wpss.b06
+delete /vendor/firmware/wpss.b07
+delete /vendor/firmware/wpss.mdt
+delete /vendor/firmware/ipa_fws.b00
+delete /vendor/firmware/ipa_fws.b01
+delete /vendor/firmware/ipa_fws.b02
+delete /vendor/firmware/ipa_fws.b03
+delete /vendor/firmware/ipa_fws.b04
+delete /vendor/firmware/ipa_fws.elf
+delete /vendor/firmware/ipa_fws.mdt
+delete /vendor/firmware/yupik_ipa_fws.b00
+delete /vendor/firmware/yupik_ipa_fws.b01
+delete /vendor/firmware/yupik_ipa_fws.b02
+delete /vendor/firmware/yupik_ipa_fws.b03
+delete /vendor/firmware/yupik_ipa_fws.b04
+delete /vendor/firmware/yupik_ipa_fws.elf
+delete /vendor/firmware/yupik_ipa_fws.mdt
+
+# Thanks @ShaDisNX255
+if [[ "$MODEL" == "SM-M526B" ]]; then
+    ui_print " -- Adding wpss blobs for SM-M526B..."
+    if [[ "$BOOTRP" == "1" ]]; then
+        ui_print " -- U1 bootloader detected, installing rev1 blobs..."
+        package_extract_dir "SM-M526B/rev1" /vendor
+    else
+        abort " -- Unknown bootloader version for SM-M526B"
+    fi
+elif [[ "$MODEL" == "SM-M526BR" ]]; then
+    ui_print " -- Adding wpss blobs for SM-M526BR..."
+    if [[ "$BOOTRP" == "1" ]]; then
+        ui_print " -- U1 bootloader detected, installing rev1 blobs..."
+        package_extract_dir "SM-M526BR/rev1" /vendor
+    else
+        abort " -- Unknown bootloader version for SM-M526BR"
+    fi
+else
+    abort " -- Unsupported model: $MODEL"
+fi
+
+# Set permissions
+set_perm 0 0 0644 /vendor/firmware/wpss.b00
+set_perm 0 0 0644 /vendor/firmware/wpss.b01
+set_perm 0 0 0644 /vendor/firmware/wpss.b02
+set_perm 0 0 0644 /vendor/firmware/wpss.b03
+set_perm 0 0 0644 /vendor/firmware/wpss.b04
+set_perm 0 0 0644 /vendor/firmware/wpss.b05
+set_perm 0 0 0644 /vendor/firmware/wpss.b06
+set_perm 0 0 0644 /vendor/firmware/wpss.b07
+set_perm 0 0 0644 /vendor/firmware/wpss.mdt
+
+# Set contexts
+set_metadata /vendor/firmware/wpss.b00 capabilities 0x0 selabel u:object_r:vendor_firmware_file:s0
+set_metadata /vendor/firmware/wpss.b01 capabilities 0x0 selabel u:object_r:vendor_firmware_file:s0
+set_metadata /vendor/firmware/wpss.b02 capabilities 0x0 selabel u:object_r:vendor_firmware_file:s0
+set_metadata /vendor/firmware/wpss.b03 capabilities 0x0 selabel u:object_r:vendor_firmware_file:s0
+set_metadata /vendor/firmware/wpss.b04 capabilities 0x0 selabel u:object_r:vendor_firmware_file:s0
+set_metadata /vendor/firmware/wpss.b05 capabilities 0x0 selabel u:object_r:vendor_firmware_file:s0
+set_metadata /vendor/firmware/wpss.b06 capabilities 0x0 selabel u:object_r:vendor_firmware_file:s0
+set_metadata /vendor/firmware/wpss.b07 capabilities 0x0 selabel u:object_r:vendor_firmware_file:s0
+set_metadata /vendor/firmware/wpss.mdt capabilities 0x0 selabel u:object_r:vendor_firmware_file:s0
+
+# Unmount partitions         
+ui_print " -- Unmounting partitions..."
+umount_all
+
+ui_print " -- Done..."
+ui_print " "
