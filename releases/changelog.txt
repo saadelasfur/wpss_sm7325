@@ -1,0 +1,4 @@
+# v1.0
+- Initial file
+- SM-M526B rev1 support
+- SM-M526BR rev1 support
