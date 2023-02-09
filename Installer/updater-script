@@ -60,6 +60,9 @@ if [[ "$MODEL" == "SM-M526B" ]]; then
     if [[ "$BOOTRP" == "1" ]]; then
         ui_print " -- U1 bootloader detected, installing rev1 blobs..."
         package_extract_dir "SM-M526B/rev1" /vendor
+    elif [[ "$BOOTRP" == "2" ]]; then
+        ui_print " -- U2 bootloader detected, installing rev2 blobs..."
+        package_extract_dir "SM-M526B/rev2" /vendor
     else
         abort " -- Unknown bootloader version for SM-M526B"
     fi
@@ -68,6 +71,9 @@ elif [[ "$MODEL" == "SM-M526BR" ]]; then
     if [[ "$BOOTRP" == "1" ]]; then
         ui_print " -- U1 bootloader detected, installing rev1 blobs..."
         package_extract_dir "SM-M526BR/rev1" /vendor
+    elif [[ "$BOOTRP" == "2" ]]; then
+        ui_print " -- U2 bootloader detected, installing rev2 blobs..."
+        package_extract_dir "SM-M526BR/rev2" /vendor
     else
         abort " -- Unknown bootloader version for SM-M526BR"
     fi
