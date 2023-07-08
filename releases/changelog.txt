@@ -1,3 +1,7 @@
+# v1.2
+- SM-M526B rev3 support
+- SM-M526BR rev3 support
+
 # v1.1
 - SM-M526B rev2 support
 - SM-M526BR rev2 support
