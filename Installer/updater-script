@@ -29,6 +29,13 @@ ui_print " "
 ui_print " -- Mounting partitions..."
 mount_all
 
+if exist "/vendor/etc/init/wifi_firmware.rc"; then
+    ui_print " - Removing dynamically linked wpss blobs..."
+    delete /vendor/etc/init/wifi_firmware.rc
+    delete_recursive /vendor/firmware/wlan/m526b
+    delete_recursive /vendor/firmware/wlan/m526br
+fi
+
 # Debloat old IPA blobs
 delete /vendor/firmware/wpss.b00
 delete /vendor/firmware/wpss.b01
@@ -63,6 +70,9 @@ if [[ "$MODEL" == "SM-M526B" ]]; then
     elif [[ "$BOOTRP" == "2" ]]; then
         ui_print " -- U2 bootloader detected, installing rev2 blobs..."
         package_extract_dir "SM-M526B/rev2" /vendor
+    elif [[ "$BOOTRP" == "3" ]]; then
+        ui_print " -- U3 bootloader detected, installing rev3 blobs..."
+        package_extract_dir "SM-M526B/rev3" /vendor
     else
         abort " -- Unknown bootloader version for SM-M526B"
     fi
@@ -74,6 +84,9 @@ elif [[ "$MODEL" == "SM-M526BR" ]]; then
     elif [[ "$BOOTRP" == "2" ]]; then
         ui_print " -- U2 bootloader detected, installing rev2 blobs..."
         package_extract_dir "SM-M526BR/rev2" /vendor
+    elif [[ "$BOOTRP" == "3" ]]; then
+        ui_print " -- U3 bootloader detected, installing rev3 blobs..."
+        package_extract_dir "SM-M526BR/rev3" /vendor
     else
         abort " -- Unknown bootloader version for SM-M526BR"
     fi
