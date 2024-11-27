@@ -3,13 +3,15 @@
 #-----------Dynamic Installer Configs-----------#
 #The #MAGISK tag is required, dont remove it
 #MAGISK
-setdefault magisk_support off
-setdefault ensure_rw off
-setdefault import_addons off
-setdefault apex_mount off
-setdefault extraction_speed default
-setdefault permissions "0:0:0755:0644"
-setdefault devices "SM-M526B:SM-M526BR"
+setdefault   magisk_support       off
+setdefault   ensure_rw            off
+setdefault   import_addons        off
+setdefault   apex_mount           off
+setdefault   overwrite_symlinks   off
+setdefault   devices              "SM-M526B:SM-M526BR"
+setdefault   devices_alert        off
+setdefault   extraction_speed     default
+setdefault   permissions          "0:0:0755:0644"
 #-----------------------------------------------#
 #Your script starts here:
 # Coded by saadelasfur @telegram
