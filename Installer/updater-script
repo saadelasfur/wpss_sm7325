@@ -81,6 +81,9 @@ if [[ "$MODEL" == "SM-M526B" ]]; then
     elif [[ "$BOOTRP" == "5" ]]; then
         ui_print " -- U5 bootloader detected, installing rev5 blobs..."
         package_extract_dir "SM-M526B/rev5" /vendor
+    elif [[ "$BOOTRP" == "6" ]]; then
+        ui_print " -- U6 bootloader detected, installing rev6 blobs..."
+        package_extract_dir "SM-M526B/rev6" /vendor
     else
         abort " -- Unknown bootloader version for SM-M526B"
     fi
@@ -101,6 +104,9 @@ elif [[ "$MODEL" == "SM-M526BR" ]]; then
     elif [[ "$BOOTRP" == "5" ]]; then
         ui_print " -- U5 bootloader detected, installing rev5 blobs..."
         package_extract_dir "SM-M526BR/rev5" /vendor
+    elif [[ "$BOOTRP" == "6" ]]; then
+        ui_print " -- U6 bootloader detected, installing rev6 blobs..."
+        package_extract_dir "SM-M526BR/rev6" /vendor
     else
         abort " -- Unknown bootloader version for SM-M526BR"
     fi
