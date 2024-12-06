@@ -20,8 +20,7 @@ done
 cat "$SRC/Installer/updater-script" > "$OUT_DIR/META-INF/com/google/android/updater-script"
 cd "$OUT_DIR"
 find . -exec touch -a -c -m -t 200812311700.00 {} +
-7z a -tzip -mx=5 "WiFi Fix - v$VERSION (m52xq).zip" .
-mv "WiFi Fix - v$VERSION (m52xq).zip" "$SRC/releases/"
+7z a -tzip -mx=5 "WiFi-Fix_v$VERSION.zip" .
 cd $SRC
 
 sleep 1 && exit 0
