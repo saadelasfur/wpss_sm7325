@@ -1,0 +1,108 @@
+name: Add WPSS blobs
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        type: choice
+        description: Target Model
+        options:
+        - SM-M526B
+        - SM-M526BR
+        - SM-A528B
+        - SM-A528N
+        - SM-A736B
+      fw_url:
+        description: Firmware URL
+        required: true
+      bl_rev:
+        description: Bootloader Revision
+        required: true
+        default: 'rev'
+
+jobs:
+  update:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+
+      - name: Set up Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          sudo apt update && sudo apt upgrade -y
+          DEBIAN_FRONTEND=noninteractive sudo apt install -yq \
+            linux-modules-extra-$(uname -r) \
+            liblz4-tool android-sdk-libsparse-utils f2fs-tools p7zip-full
+          sudo modprobe f2fs
+
+      - name: Download firmware
+        run: |
+          sudo wget -O "${{ github.event.inputs.model }}_${{ github.event.inputs.bl_rev }}.zip" "${{ github.event.inputs.fw_url }}"
+          7z x "${{ github.event.inputs.model }}_${{ github.event.inputs.bl_rev }}.zip" -o"${{ github.event.inputs.model }}_${{ github.event.inputs.bl_rev }}"
+          rm "${{ github.event.inputs.model }}_${{ github.event.inputs.bl_rev }}.zip"
+
+      - name: Get path of files
+        run: |
+          echo "ap_tar=`find -name AP*`" >> $GITHUB_ENV
+          echo "bl_tar=`find -name BL*`" >> $GITHUB_ENV
+          echo "cp_tar=`find -name CP*`" >> $GITHUB_ENV
+          echo "csc_tar=`find -name CSC*`" >> $GITHUB_ENV
+          echo "home_csc_tar=`find -name HOME_CSC*`" >> $GITHUB_ENV
+
+      - name: Cleanup space
+        run: |
+          sudo apt-get remove --purge -y "php*" "dotnet*" "mysql*" "nodejs*" "clang*" "google*"
+          sudo apt-get autoremove -y
+          sudo apt-get clean
+          sudo rm -rf /usr/local
+          for f in "${{ env.bl_tar }}" "${{ env.cp_tar }}" "${{ env.csc_tar }}" "${{ env.home_csc_tar }}"; do
+              rm "$f"
+          done
+
+      - name: Add new WPSS blobs
+        run: |
+          tar xvf ${{ env.ap_tar }} super.img.lz4
+          rm ${{ env.ap_tar }}
+          lz4 -d super.img.lz4 super.img
+          rm super.img.lz4
+          simg2img super.img super_raw.img
+          rm super.img
+          mv super_raw.img super.img
+          python3 .github/tools/bin/lpunpack.py -p vendor super.img .
+          rm super.img
+          mkdir vendor
+          mkdir -p "${{ github.event.inputs.model }}/${{ github.event.inputs.bl_rev }}/firmware"
+          sudo mount -o ro "vendor.img" "vendor"
+          FILES="wpss.b00 wpss.b01 wpss.b02 wpss.b03 wpss.b04 wpss.b05 wpss.b06 wpss.b07 wpss.mdt"
+          for file in $FILES; do
+              cp -f -a --preserve=all "vendor/firmware/$file" "${{ github.event.inputs.model }}/${{ github.event.inputs.bl_rev }}/firmware/"
+          done
+          sudo umount vendor \
+              && rm vendor.img \
+              && rm -rf vendor
+
+      - name: Commit the changes
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git pull origin ${{ github.ref }} --ff-only
+          git add ${{ github.event.inputs.model }}/*
+          git commit -m "Add ${{ github.event.inputs.bl_rev }} support for ${{ github.event.inputs.model }}"
+
+      - name: Push changes to repo
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.TOKEN }}

@@ -2,5 +2,6 @@ Installer/Installer.zip binary
 
 SM-M526B/*/firmware/* binary
 SM-M526BR/*/firmware/* binary
-
-releases/*.zip binary
+SM-A528B/*/firmware/* binary
+SM-A528N/*/firmware/* binary
+SM-A736B/*/firmware/* binary
