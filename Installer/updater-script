@@ -8,7 +8,7 @@ setdefault   ensure_rw            off
 setdefault   import_addons        off
 setdefault   apex_mount           off
 setdefault   overwrite_symlinks   off
-setdefault   devices              "SM-M526B:SM-M526BR"
+setdefault   devices              off
 setdefault   devices_alert        off
 setdefault   extraction_speed     default
 setdefault   permissions          "0:0:0755:0644"
@@ -19,23 +19,36 @@ setdefault   permissions          "0:0:0755:0644"
 MODEL=$(grep_cmdline androidboot.em.model)
 BOOTRP=$(grep_cmdline androidboot.rp)
 
-ui_print " "
-ui_print "------------------------------------------"
-ui_print " -- WiFi fix for Galaxy M52 5G (m52xq) -- "
-ui_print "------------------------------------------"
-ui_print " ------- by saadelasfur @telegram ------- "
-ui_print "------------------------------------------"
+if [[ "$MODEL" == "SM-M526"* ]] || [[ "$MODEL" == "SM-A528"* ]] || [[ "$MODEL" == "SM-A736"* ]]; then
+    ui_print " "
+else
+    ui_print " "
+    abort " -- Unsupported model: $MODEL. Aborting..."
+fi
+
+ui_print "--------------------------------------------------"
+ui_print " -- WiFi Fix for Samsung Galaxy sm7325 devices -- "
+ui_print "--------------------------------------------------"
+ui_print " ----------- by saadelasfur @telegram ----------- "
+ui_print "--------------------------------------------------"
 ui_print " "
 
 # Mount partitions
 ui_print " -- Mounting partitions..."
-mount_all
+try_mount -rw /vendor
 
 if exist "/vendor/etc/init/wifi_firmware.rc"; then
-    ui_print " - Removing dynamically linked wpss blobs..."
+    ui_print " -- Removing dynamically linked wpss blobs..."
     delete /vendor/etc/init/wifi_firmware.rc
-    delete_recursive /vendor/firmware/wlan/m526b
-    delete_recursive /vendor/firmware/wlan/m526br
+    if [[ "$MODEL" == "SM-M526"* ]]; then
+        delete_recursive /vendor/firmware/wlan/m526b
+        delete_recursive /vendor/firmware/wlan/m526br
+    elif [[ "$MODEL" == "SM-A528"* ]]; then
+        delete_recursive /vendor/firmware/wlan/a528b
+        delete_recursive /vendor/firmware/wlan/a528n
+    elif [[ "$MODEL" == "SM-A736"* ]]; then
+        delete_recursive /vendor/firmware/wlan/a736b
+    fi
 fi
 
 # Debloat old IPA blobs
@@ -85,7 +98,7 @@ if [[ "$MODEL" == "SM-M526B" ]]; then
         ui_print " -- U6 bootloader detected, installing rev6 blobs..."
         package_extract_dir "SM-M526B/rev6" /vendor
     else
-        abort " -- Unknown bootloader version for SM-M526B"
+        abort " -- Unknown bootloader version for SM-M526B, Aborting..."
     fi
 elif [[ "$MODEL" == "SM-M526BR" ]]; then
     ui_print " -- Adding wpss blobs for SM-M526BR..."
@@ -108,10 +121,101 @@ elif [[ "$MODEL" == "SM-M526BR" ]]; then
         ui_print " -- U6 bootloader detected, installing rev6 blobs..."
         package_extract_dir "SM-M526BR/rev6" /vendor
     else
-        abort " -- Unknown bootloader version for SM-M526BR"
+        abort " -- Unknown bootloader version for SM-M526BR, Aborting..."
     fi
-else
-    abort " -- Unsupported model: $MODEL"
+elif [[ "$MODEL" == "SM-A528B" ]]; then
+    ui_print " -- Adding wpss blobs for SM-A528B..."
+    if [[ "$BOOTRP" == "1" ]]; then
+        ui_print " -- U1 bootloader detected, installing rev1 blobs..."
+        package_extract_dir "SM-A528B/rev1" /vendor
+    elif [[ "$BOOTRP" == "2" ]]; then
+        ui_print " -- U2 bootloader detected, installing rev2 blobs..."
+        package_extract_dir "SM-A528B/rev2" /vendor
+    elif [[ "$BOOTRP" == "3" ]]; then
+        ui_print " -- U3 bootloader detected, installing rev3 blobs..."
+        package_extract_dir "SM-A528B/rev3" /vendor
+    elif [[ "$BOOTRP" == "4" ]]; then
+        ui_print " -- U4 bootloader detected, installing rev4 blobs..."
+        package_extract_dir "SM-A528B/rev4" /vendor
+    elif [[ "$BOOTRP" == "5" ]]; then
+        ui_print " -- U5 bootloader detected, installing rev5 blobs..."
+        package_extract_dir "SM-A528B/rev5" /vendor
+    elif [[ "$BOOTRP" == "6" ]]; then
+        ui_print " -- U6 bootloader detected, installing rev6 blobs..."
+        package_extract_dir "SM-A528B/rev6" /vendor
+    elif [[ "$BOOTRP" == "7" ]]; then
+        ui_print " -- U7 bootloader detected, installing rev7 blobs..."
+        package_extract_dir "SM-A528B/rev7" /vendor
+    elif [[ "$BOOTRP" == "8" ]]; then
+        ui_print " -- U8 bootloader detected, installing rev8 blobs..."
+        package_extract_dir "SM-A528B/rev8" /vendor
+    elif [[ "$BOOTRP" == "9" ]]; then
+        ui_print " -- U9 bootloader detected, installing rev9 blobs..."
+        package_extract_dir "SM-A528B/rev9" /vendor
+    elif [[ "$BOOTRP" == "10" ]]; then
+        ui_print " -- U10 bootloader detected, installing rev10 blobs..."
+        package_extract_dir "SM-A528B/rev10" /vendor
+    else
+        abort " -- Unknown bootloader version for SM-A528B, Aborting..."
+    fi
+elif [[ "$MODEL" == "SM-A528N" ]]; then
+    ui_print " -- Adding wpss blobs for SM-A528N..."
+    if [[ "$BOOTRP" == "1" ]]; then
+        ui_print " -- U1 bootloader detected, installing rev1 blobs..."
+        package_extract_dir "SM-A528N/rev1" /vendor
+    elif [[ "$BOOTRP" == "2" ]]; then
+        ui_print " -- U2 bootloader detected, installing rev2 blobs..."
+        package_extract_dir "SM-A528N/rev2" /vendor
+    elif [[ "$BOOTRP" == "3" ]]; then
+        ui_print " -- U3 bootloader detected, installing rev3 blobs..."
+        package_extract_dir "SM-A528N/rev3" /vendor
+    elif [[ "$BOOTRP" == "4" ]]; then
+        ui_print " -- U4 bootloader detected, installing rev4 blobs..."
+        package_extract_dir "SM-A528N/rev4" /vendor
+    elif [[ "$BOOTRP" == "5" ]]; then
+        ui_print " -- U5 bootloader detected, installing rev5 blobs..."
+        package_extract_dir "SM-A528N/rev5" /vendor
+    elif [[ "$BOOTRP" == "6" ]]; then
+        ui_print " -- U6 bootloader detected, installing rev6 blobs..."
+        package_extract_dir "SM-A528N/rev6" /vendor
+    else
+        abort " -- Unknown bootloader version for SM-A528N, Aborting..."
+    fi
+elif [[ "$MODEL" == "SM-A736B" ]]; then
+    ui_print " -- Adding wpss blobs for SM-A736B..."
+    if [[ "$BOOTRP" == "1" ]]; then
+        ui_print " -- U1 bootloader detected, installing rev1 blobs..."
+        package_extract_dir "SM-A736B/rev1" /vendor
+    elif [[ "$BOOTRP" == "2" ]]; then
+        ui_print " -- U2 bootloader detected, installing rev2 blobs..."
+        package_extract_dir "SM-A736B/rev2" /vendor
+    elif [[ "$BOOTRP" == "3" ]]; then
+        ui_print " -- U3 bootloader detected, installing rev3 blobs..."
+        package_extract_dir "SM-A736B/rev3" /vendor
+    elif [[ "$BOOTRP" == "4" ]]; then
+        ui_print " -- U4 bootloader detected, installing rev4 blobs..."
+        package_extract_dir "SM-A736B/rev4" /vendor
+    elif [[ "$BOOTRP" == "5" ]]; then
+        ui_print " -- U5 bootloader detected, installing rev5 blobs..."
+        package_extract_dir "SM-A736B/rev5" /vendor
+    elif [[ "$BOOTRP" == "6" ]]; then
+        ui_print " -- U6 bootloader detected, installing rev6 blobs..."
+        package_extract_dir "SM-A736B/rev6" /vendor
+    elif [[ "$BOOTRP" == "7" ]]; then
+        ui_print " -- U7 bootloader detected, installing rev7 blobs..."
+        package_extract_dir "SM-A736B/rev7" /vendor
+    elif [[ "$BOOTRP" == "8" ]]; then
+        ui_print " -- U8 bootloader detected, installing rev8 blobs..."
+        package_extract_dir "SM-A736B/rev8" /vendor
+    elif [[ "$BOOTRP" == "9" ]]; then
+        ui_print " -- U9 bootloader detected, installing rev9 blobs..."
+        package_extract_dir "SM-A736B/rev9" /vendor
+    elif [[ "$BOOTRP" == "10" ]]; then
+        ui_print " -- U10 bootloader detected, installing rev10 blobs..."
+        package_extract_dir "SM-A736B/rev10" /vendor
+    else
+        abort " -- Unknown bootloader version for SM-A736B, Aborting..."
+    fi
 fi
 
 # Set permissions
