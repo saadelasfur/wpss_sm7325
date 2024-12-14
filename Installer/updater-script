@@ -15,6 +15,7 @@ setdefault   permissions          "0:0:0755:0644"
 #-----------------------------------------------#
 #Your script starts here:
 # Coded by saadelasfur @telegram
+# Thanks @Simon1511 & @ShaDisNX255
 
 MODEL=$(grep_cmdline androidboot.em.model)
 BOOTRP=$(grep_cmdline androidboot.rp)
@@ -51,6 +52,11 @@ if exist "/vendor/etc/init/wifi_firmware.rc"; then
     fi
 fi
 
+if grep -q "wpss" /vendor/etc/init/ipa_fws.rc; then
+    ui_print " -- Fixing ipa_fws.rc ..."
+    force_update_file "$addons/ipa_fws.txt" "/vendor/etc/init/ipa_fws.rc"
+fi
+
 # Debloat old IPA blobs
 delete /vendor/firmware/wpss.b00
 delete /vendor/firmware/wpss.b01
@@ -76,7 +82,7 @@ delete /vendor/firmware/yupik_ipa_fws.b04
 delete /vendor/firmware/yupik_ipa_fws.elf
 delete /vendor/firmware/yupik_ipa_fws.mdt
 
-# Thanks @ShaDisNX255
+# Extract wpss blobs
 if [[ "$MODEL" == "SM-M526B" ]]; then
     ui_print " -- Adding wpss blobs for SM-M526B..."
     if [[ "$BOOTRP" == "1" ]]; then
@@ -240,7 +246,12 @@ set_metadata /vendor/firmware/wpss.b06 capabilities 0x0 selabel u:object_r:vendo
 set_metadata /vendor/firmware/wpss.b07 capabilities 0x0 selabel u:object_r:vendor_firmware_file:s0
 set_metadata /vendor/firmware/wpss.mdt capabilities 0x0 selabel u:object_r:vendor_firmware_file:s0
 
-# Unmount partitions         
+if ! grep -q "vendor_firmware_file (file (mounton" /vendor/etc/selinux/vendor_sepolicy.cil; then
+    ui_print " -- Patching SePolicy..."
+    echo "(allow init_30_0 vendor_firmware_file (file (mounton)))" >> /vendor/etc/selinux/vendor_sepolicy.cil
+fi
+
+# Unmount partitions
 ui_print " -- Unmounting partitions..."
 umount_all
 
