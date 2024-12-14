@@ -2,3 +2,9 @@ out/
 
 !.gitattributes
 !.gitignore
+
+!SM-M526B/current
+!SM-M526BR/current
+!SM-A528B/current
+!SM-A528N/current
+!SM-A736B/current
