@@ -1,4 +1,5 @@
 Installer/Installer.zip binary
+.github/tools/bin/lpunpack binary
 
 SM-M526B/*/firmware/* binary
 SM-M526BR/*/firmware/* binary
