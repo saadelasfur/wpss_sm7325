@@ -161,6 +161,9 @@ elif [[ "$MODEL" == "SM-A528B" ]]; then
     elif [[ "$BOOTRP" == "10" ]]; then
         ui_print " -- U10 bootloader detected, installing rev10 blobs..."
         package_extract_dir "SM-A528B/rev10" /vendor
+    elif [[ "$BOOTRP" == "11" ]]; then
+        ui_print " -- U11 bootloader detected, installing rev11 blobs..."
+        package_extract_dir "SM-A528B/rev11" /vendor
     else
         abort " -- Unknown bootloader version for SM-A528B, Aborting..."
     fi
