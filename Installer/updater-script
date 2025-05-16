@@ -187,6 +187,9 @@ elif [[ "$MODEL" == "SM-A528N" ]]; then
     elif [[ "$BOOTRP" == "6" ]]; then
         ui_print " -- U6 bootloader detected, installing rev6 blobs..."
         package_extract_dir "SM-A528N/rev6" /vendor
+    elif [[ "$BOOTRP" == "7" ]]; then
+        ui_print " -- U7 bootloader detected, installing rev7 blobs..."
+        package_extract_dir "SM-A528N/rev7" /vendor
     else
         abort " -- Unknown bootloader version for SM-A528N, Aborting..."
     fi
